@@ -46,6 +46,11 @@ call-bind@^1.0.0:
     function-bind "^1.1.1"
     get-intrinsic "^1.0.2"
 
+compress@^0.99.0:
+  version "0.99.0"
+  resolved "https://registry.yarnpkg.com/compress/-/compress-0.99.0.tgz#97e301c25c4d01f097d85103f65eccb2e7796502"
+  integrity sha512-+qy9iMBFGTLUqKwYkAqRtZ5Xdl1PGKrSMYCuiirsxSQ5OgDoyP9QO6YoZ4feHzhpufGOwJ+y4qRXz2ytzZ1l0g==
+
 content-disposition@0.5.4:
   version "0.5.4"
   resolved "https://registry.npmjs.org/content-disposition/-/content-disposition-0.5.4.tgz"

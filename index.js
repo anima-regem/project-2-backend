@@ -3,8 +3,10 @@ const app = express();
 const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
+const compression = require('compression');
 const transcript = require("./transcript.js");
 
+app.use(compression());
 app.use(cors());
 
 app.get("/video/:id/audio", (req, res) => {
