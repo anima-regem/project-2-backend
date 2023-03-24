@@ -124,7 +124,7 @@ app.get("/audio/:id", (req, res) => {
 });
 
 app.get('/test', (req, res)=>{
-  res.statusCode(200).json({message: "Endpoint Success"})
+  res.json({message: "Endpoint Success"})
 })
 
 app.listen(8000, () => {
