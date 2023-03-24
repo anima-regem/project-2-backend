@@ -52,6 +52,8 @@ app.get("/video/:id", (req, res) => {
   const fileSize = stat.size;
   const range = req.headers.range;
 
+  const chunksize = 1024 * 1024; // Set the chunk size to 1 MB
+
   if (range) {
     // If the request includes a range header, parse the start and end bytes
     const parts = range.replace(/bytes=/, "").split("-");
@@ -59,7 +61,7 @@ app.get("/video/:id", (req, res) => {
     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
 
     // Set the headers for the partial content response
-    const chunkSize = end - start + 1;
+    const chunkSize = Math.min(chunksize, end - start + 1); // Use the smaller of chunksize and the remaining data to avoid exceeding the client's buffer limit
     const file = fs.createReadStream(filePath, { start, end });
     const headers = {
       "Content-Range": `bytes ${start}-${end}/${fileSize}`,
@@ -98,16 +100,17 @@ app.get("/audio/:id", (req, res) => {
   const range = req.headers.range;
   const fileSize = fs.statSync(audioFile).size;
 
+  const chunksize = 1024 * 1024; // Set the chunk size to 1 MB
+
   if (range) {
     const parts = range.replace(/bytes=/, "").split("-");
     const start = parseInt(parts[0], 10);
     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-    const chunksize = end - start + 1;
     const fileStream = fs.createReadStream(audioFile, { start, end });
     const headers = {
       "Content-Range": `bytes ${start}-${end}/${fileSize}`,
       "Accept-Ranges": "bytes",
-      "Content-Length": chunksize,
+      "Content-Length": end - start + 1,
       "Content-Type": "audio/webm",
     };
     res.writeHead(206, headers);
