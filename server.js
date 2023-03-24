@@ -41,7 +41,6 @@ app.get("/video/:id/audio", (req, res) => {
 });
 
 app.get("/video/:id/subtitles", (req, res) => {
-
   const sub = transcript[1];
   res.json(sub);
 });
@@ -123,10 +122,12 @@ app.get("/audio/:id", (req, res) => {
   }
 });
 
-app.get('/test', (req, res)=>{
-  res.json({message: "Endpoint Success"})
-})
+app.get("/test", (req, res) => {
+  res.json({ message: "Endpoint Success" });
+});
 
 app.listen(8000, () => {
   console.log("Server listening on port 8000");
 });
+
+module.exports = app;
