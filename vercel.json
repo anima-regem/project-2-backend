@@ -5,5 +5,5 @@
       "use": "@now/node-server"
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
