@@ -9,34 +9,42 @@ app.use(cors());
 
 app.get("/video/:id/audio", (req, res) => {
   console.log("audio");
-  const audioFile = "audio.webm";
-  const fs = require("fs");
-  const audioStream = fs.createReadStream(audioFile);
-
+  const filePath = path.join(__dirname, "audio.webm");
+  const stat = fs.statSync(filePath);
+  const fileSize = stat.size;
   const range = req.headers.range;
-  const fileSize = fs.statSync(audioFile).size;
+
+  const chunksize = 1024 * 1024; // Set the chunk size to 1 MB
 
   if (range) {
+    // If the request includes a range header, parse the start and end bytes
     const parts = range.replace(/bytes=/, "").split("-");
     const start = parseInt(parts[0], 10);
     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-    const chunksize = end - start + 1;
-    const fileStream = fs.createReadStream(audioFile, { start, end });
+
+    // Set the headers for the partial content response
+    const chunkSize = Math.min(chunksize, end - start + 1); // Use the smaller of chunksize and the remaining data to avoid exceeding the client's buffer limit
+    const file = fs.createReadStream(filePath, { start, end });
     const headers = {
       "Content-Range": `bytes ${start}-${end}/${fileSize}`,
       "Accept-Ranges": "bytes",
-      "Content-Length": chunksize,
+      "Content-Length": chunkSize,
       "Content-Type": "audio/webm",
     };
+
+    // Send the partial content response
     res.writeHead(206, headers);
-    fileStream.pipe(res);
+    file.pipe(res);
   } else {
+    // If the request does not include a range header, send the entire file
     const headers = {
       "Content-Length": fileSize,
       "Content-Type": "audio/webm",
     };
+
+    // Send the entire file
     res.writeHead(200, headers);
-    audioStream.pipe(res);
+    fs.createReadStream(filePath).pipe(res);
   }
 });
 
@@ -93,35 +101,42 @@ app.get("/audio/:id/subtitles", (req, res) => {
 
 app.get("/audio/:id", (req, res) => {
   console.log("audio-new");
-  const audioFile = "audio1.webm";
-  const fs = require("fs");
-  const audioStream = fs.createReadStream(audioFile);
-
+  const filePath = path.join(__dirname, "audio1.webm");
+  const stat = fs.statSync(filePath);
+  const fileSize = stat.size;
   const range = req.headers.range;
-  const fileSize = fs.statSync(audioFile).size;
 
   const chunksize = 1024 * 1024; // Set the chunk size to 1 MB
 
   if (range) {
+    // If the request includes a range header, parse the start and end bytes
     const parts = range.replace(/bytes=/, "").split("-");
     const start = parseInt(parts[0], 10);
     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-    const fileStream = fs.createReadStream(audioFile, { start, end });
+
+    // Set the headers for the partial content response
+    const chunkSize = Math.min(chunksize, end - start + 1); // Use the smaller of chunksize and the remaining data to avoid exceeding the client's buffer limit
+    const file = fs.createReadStream(filePath, { start, end });
     const headers = {
       "Content-Range": `bytes ${start}-${end}/${fileSize}`,
       "Accept-Ranges": "bytes",
-      "Content-Length": end - start + 1,
+      "Content-Length": chunkSize,
       "Content-Type": "audio/webm",
     };
+
+    // Send the partial content response
     res.writeHead(206, headers);
-    fileStream.pipe(res);
+    file.pipe(res);
   } else {
+    // If the request does not include a range header, send the entire file
     const headers = {
       "Content-Length": fileSize,
       "Content-Type": "audio/webm",
     };
+
+    // Send the entire file
     res.writeHead(200, headers);
-    audioStream.pipe(res);
+    fs.createReadStream(filePath).pipe(res);
   }
 });
 
