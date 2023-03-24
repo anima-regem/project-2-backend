@@ -123,6 +123,10 @@ app.get("/audio/:id", (req, res) => {
   }
 });
 
+app.get('/test', (req, res)=>{
+  res.statusCode(200).json({message: "Endpoint Success"})
+})
+
 app.listen(8000, () => {
   console.log("Server listening on port 8000");
 });
